@@ -1,12 +1,19 @@
 'use client';
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios'; // Imported AxiosError for type safety
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 
+// Define the Favorite interface based on your API response
+interface Favorite {
+  recipeId: string;
+  recipeName: string;
+  imageUrl: string;
+}
+
 export default function Favorites() {
   const { data: session, status } = useSession();
-  const [favorites, setFavorites] = useState([]);
+  const [favorites, setFavorites] = useState<Favorite[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -22,7 +29,11 @@ export default function Favorites() {
         });
         setFavorites(response.data);
       } catch (error) {
-        console.error('Error fetching favorites:', error.response?.data || error.message);
+        console.error('Error fetching favorites:', 
+          error instanceof Error ? error.message : 
+          error instanceof AxiosError ? error.response?.data || error.message : 
+          String(error)
+        );
       } finally {
         setLoading(false);
       }
@@ -37,7 +48,11 @@ export default function Favorites() {
       });
       setFavorites(favorites.filter((fav) => fav.recipeId !== recipeId));
     } catch (error) {
-      console.error('Error removing favorite:', error);
+      console.error('Error removing favorite:', 
+        error instanceof Error ? error.message : 
+        error instanceof AxiosError ? error.response?.data || error.message : 
+        String(error)
+      );
     }
   };
 

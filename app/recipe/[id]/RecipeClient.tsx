@@ -9,7 +9,7 @@ import NotFound from './NotFound';
 
 export default function RecipeClient({ id }: { id: string }) {
   const { data: session, status } = useSession();
-  const [recipe, setRecipe] = useState(null);
+  const [recipe, setRecipe] = useState<any | null>(null); // Explicitly typed as any or null
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -30,6 +30,10 @@ export default function RecipeClient({ id }: { id: string }) {
   const handleAddToFavorites = async () => {
     if (!session) {
       alert('Please log in to save favorites');
+      return;
+    }
+    if (!recipe) {
+      alert('No recipe available to add to favorites');
       return;
     }
     try {

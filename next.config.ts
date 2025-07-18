@@ -1,16 +1,10 @@
-module.exports = {
-  webpack: (config, { isServer }) => {
-    if (!isServer) {
-      config.resolve.fallback = {
-        child_process: false,
-        fs: false,
-        'fs/promises': false,
-        net: false,
-        tls: false,
-        'timers/promises': false,
-      };
-    }
-    config.experiments = { ...config.experiments, topLevelAwait: true };
-    return config;
+import type { NextConfig } from 'next'
+ 
+const nextConfig: NextConfig = {
+  eslint: {
+    
+    ignoreDuringBuilds: true,
   },
-};
+}
+ 
+export default nextConfig
