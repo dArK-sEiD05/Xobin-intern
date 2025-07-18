@@ -4,9 +4,9 @@ import bcrypt from 'bcryptjs';
 
 export async function POST(request: Request) {
   try {
-    const { email, password, name } = await request.json();
-    if (!email || !password || !name) {
-      return NextResponse.json({ error: 'Email, password, and name are required' }, { status: 400 });
+    const { email, password } = await request.json();
+    if (!email || !password) {
+      return NextResponse.json({ error: 'Email and password are required' }, { status: 400 });
     }
 
     const { db } = await connectToDatabase();
@@ -17,7 +17,7 @@ export async function POST(request: Request) {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    await db.collection('users').insertOne({ email, password: hashedPassword, name });
+    await db.collection('users').insertOne({ email, password: hashedPassword });
 
     return NextResponse.json({ message: 'User created successfully' }, { status: 201 });
   } catch (error) {
