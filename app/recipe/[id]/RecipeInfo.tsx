@@ -21,57 +21,55 @@ export default function RecipeInfo({ recipe, session, handleAddToFavorites }: Re
   }
 
   return (
-    <div className="container  flex-row mx-auto px-4 py-8 max-w-5xl">
-      {/* Hero Section */}
-      <div className="relative rounded-xl overflow-hidden shadow-lg mb-8">
-        <div className="relative w-full aspect-[16/9]">
-          <img
-            src={recipe.strMealThumb}
-            alt={recipe.strMeal}
-            className="w-full h-full object-cover object-center"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white p-4 sm:p-6">
+    <div className=" container mx-auto px-4 py-8 max-w-9xl">
+      <div className="w-full flex flex-col md:flex-row gap-20 md:gap-8">
+        {/* Image Section */}
+        <div className="bg-white rounded-md shadow-lg overflow-hidden mt-5.5 h-full max-w-xl md:w-1/2 border-2 border-gray-300">
+          <div className="relative w-full aspect-square">
+            <img
+              src={recipe.strMealThumb}
+              alt={recipe.strMeal}
+              className="w-full h-full object-cover object-center"
+            />
+          </div>
+        </div>
+
+        {/* Content Section */}
+        <div className="bg-white rounded-xl shadow-lg p-6 md:p-8 w-full md:w-1/2 flex flex-col justify-between">
+          <div>
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 mb-4">
               {recipe.strMeal}
             </h1>
+            <div className="mb-6">
+              <h2 className="text-xl md:text-2xl font-semibold text-gray-800 mb-3">Instructions</h2>
+              <p className="text-gray-700 leading-relaxed whitespace-pre-line">
+                {recipe.strInstructions}
+              </p>
+            </div>
+            <div>
+              <h2 className="text-xl md:text-2xl font-semibold text-gray-800 mb-3">Ingredients</h2>
+              <ul className="list-disc list-inside text-gray-700 space-y-2">
+                {ingredients.map((item, index) => (
+                  <li key={index} className="text-base">{item}</li>
+                ))}
+              </ul>
+            </div>
           </div>
-        </div>
-      </div>
-
-      {/* Content Section */}
-      <div className="bg-white rounded-xl shadow-lg p-6 md:p-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Instructions */}
-          <div>
-            <h2 className="text-xl md:text-2xl font-semibold text-gray-800 mb-4">Instructions</h2>
-            <p className="text-gray-700 leading-relaxed whitespace-pre-line">{recipe.strInstructions}</p>
+          {/* Actions */}
+          <div className="mt-6 flex justify-start">
+            {session ? (
+              <button
+                onClick={handleAddToFavorites}
+                className="px-6 py-3  bg-white-600 text-black border-2 font-medium rounded-lg hover:bg-blue-100 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                Add to Favorites
+              </button>
+            ) : (
+              <p className="text-gray-600">
+                Please <Link href="/login" className="text-blue-500 hover:underline">log in</Link> to save this recipe to favorites.
+              </p>
+            )}
           </div>
-
-          {/* Ingredients */}
-          <div>
-            <h2 className="text-xl md:text-2xl font-semibold text-gray-800 mb-4">Ingredients</h2>
-            <ul className="list-disc list-inside text-gray-700 space-y-2">
-              {ingredients.map((item, index) => (
-                <li key={index} className="text-base">{item}</li>
-              ))}
-            </ul>
-          </div>
-        </div>
-
-        {/* Actions */}
-        <div className="mt-8 flex justify-center">
-          {session ? (
-            <button
-              onClick={handleAddToFavorites}
-              className="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              Add to Favorites
-            </button>
-          ) : (
-            <p className="text-gray-600 text-center">
-              Please <Link href="/login" className="text-blue-500 hover:underline">log in</Link> to save this recipe to favorites.
-            </p>
-          )}
         </div>
       </div>
     </div>
