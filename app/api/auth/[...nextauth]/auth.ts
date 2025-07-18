@@ -76,13 +76,6 @@ export const authOptions: NextAuthOptions = {
     signOut: '/',
     error: '/login',
   },
-  cookies: {
-    sessionToken: {
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      path: '/',
-    },
-  },
   callbacks: {
     async jwt({ token, user }) {
       console.log('JWT callback, user:', user, 'token:', token);
