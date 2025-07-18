@@ -40,6 +40,7 @@ export const authOptions: NextAuthOptions = {
             return null; // NextAuth will handle as invalid credentials
           }
           const { db } = await connectToDatabase();
+          if (!db) throw new Error('Database connection failed');
           const user = await db.collection('users').findOne({ email: credentials.email });
           if (!user) return null;
           const isValid = await bcrypt.compare(credentials.password, user.password);
@@ -57,7 +58,7 @@ export const authOptions: NextAuthOptions = {
     maxAge: 30 * 24 * 60 * 60, // 30 days
     updateAge: 24 * 60 * 60, // 24 hours
   },
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: process.env.NEXTAUTH_SECRET || 'default-secret-for-dev-only', // Fallback for dev
   pages: {
     signIn: '/login',
     signOut: '/',
@@ -80,9 +81,9 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
   },
-  // Explicitly set callback URL for production
+  // Dynamic callback URL with fallback
   ...(process.env.NODE_ENV === 'production' && {
-    callbackUrl: `${process.env.NEXTAUTH_URL}/api/auth/callback/credentials`,
+    callbackUrl: `${process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://xobin-intern.vercel.app'}/api/auth/callback/credentials`,
   }),
 };
 
