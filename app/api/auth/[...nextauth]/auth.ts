@@ -35,20 +35,32 @@ export const authOptions: NextAuthOptions = {
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
+        console.log('Authorize called with credentials:', credentials);
         try {
           if (!credentials?.email || !credentials?.password) {
-            return null; // NextAuth will handle as invalid credentials
+            console.log('Missing credentials');
+            return null;
           }
           const { db } = await connectToDatabase();
-          if (!db) throw new Error('Database connection failed');
+          if (!db) {
+            console.log('Database connection failed');
+            return null;
+          }
           const user = await db.collection('users').findOne({ email: credentials.email });
-          if (!user) return null;
+          if (!user) {
+            console.log('No user found for email:', credentials.email);
+            return null;
+          }
           const isValid = await bcrypt.compare(credentials.password, user.password);
-          if (!isValid) return null;
+          if (!isValid) {
+            console.log('Invalid password for user:', credentials.email);
+            return null;
+          }
+          console.log('Authentication successful for user:', user.email);
           return { id: user._id.toString(), email: user.email, name: user.name };
         } catch (error) {
           console.error('Authorize error:', error);
-          return null; // Fail gracefully
+          return null;
         }
       },
     }),
@@ -64,8 +76,16 @@ export const authOptions: NextAuthOptions = {
     signOut: '/',
     error: '/login',
   },
+  cookies: {
+    sessionToken: {
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+    },
+  },
   callbacks: {
     async jwt({ token, user }) {
+      console.log('JWT callback, user:', user, 'token:', token);
       if (user) {
         token.id = user.id;
         token.name = user.name;
@@ -73,6 +93,7 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
     async session({ session, token }) {
+      console.log('Session callback, session:', session, 'token:', token);
       if (session.user) {
         session.user.id = token.id as string;
         session.user.name = token.name as string;
@@ -81,9 +102,9 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
   },
-  // Dynamic callback URL with fallback
+  // Explicit NEXTAUTH_URL for production
   ...(process.env.NODE_ENV === 'production' && {
-    callbackUrl: `${process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://xobin-intern.vercel.app'}/api/auth/callback/credentials`,
+    callbackUrl: `${process.env.NEXTAUTH_URL || 'https://xobin-intern.vercel.app'}/api/auth/callback/credentials`,
   }),
 };
 
