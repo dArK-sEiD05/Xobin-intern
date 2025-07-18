@@ -13,10 +13,11 @@ export default function RecipeClient({ id }: { id: string }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    console.log('Session status:', status, 'Session data:', session);
     const fetchRecipe = async () => {
       try {
         const response = await axios.get(`https://www.themealdb.com/api/json/v1/1/lookup.php?i=${id}`);
-        setRecipe(response.data.meals[0]);
+        setRecipe(response.data.meals ? response.data.meals[0] : null);
       } catch (error) {
         console.error('Error fetching recipe:', error);
       } finally {
@@ -27,27 +28,22 @@ export default function RecipeClient({ id }: { id: string }) {
   }, [id]);
 
   const handleAddToFavorites = async () => {
-    if (status === 'loading' || !session) {
-      console.log('Session status:', status, 'Session:', session);
+    if (!session) {
       alert('Please log in to save favorites');
       return;
     }
-    console.log('Sending request with session:', session);
     try {
-      const response = await axios.post('/api/favorites', {
+      await axios.post('/api/favorites', {
         recipeId: recipe.idMeal,
         recipeName: recipe.strMeal,
         imageUrl: recipe.strMealThumb,
       });
-      console.log('API Response:', response.data);
       alert('Added to favorites');
     } catch (error) {
-      console.error('Error adding to favorites:', error.response?.data || error.message);
-      alert('Failed to add to favorites: ' + (error.response?.data?.error || 'Unauthorized'));
+      console.error('Error adding to favorites:', error);
+      alert('Failed to add to favorites');
     }
   };
-
-  const value = { recipe, loading, session, handleAddToFavorites };
 
   return (
     <>

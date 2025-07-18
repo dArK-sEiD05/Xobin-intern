@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '../auth/[..nextauth]/auth';
+import { authOptions } from '../auth/[...nextauth]/auth';
 
 export async function POST(request: Request) {
   const session = await getServerSession(authOptions);

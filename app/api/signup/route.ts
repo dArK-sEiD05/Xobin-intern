@@ -3,16 +3,25 @@ import { connectToDatabase } from '@/lib/mongodb';
 import bcrypt from 'bcryptjs';
 
 export async function POST(request: Request) {
-  const { email, password } = await request.json();
-  const { db } = await connectToDatabase();
+  try {
+    const { email, password, name } = await request.json();
+    if (!email || !password || !name) {
+      return NextResponse.json({ error: 'Email, password, and name are required' }, { status: 400 });
+    }
 
-  const existingUser = await db.collection('users').findOne({ email });
-  if (existingUser) {
-    return NextResponse.json({ error: 'User already exists' }, { status: 400 });
+    const { db } = await connectToDatabase();
+    console.log('Connected to MongoDB');
+    const existingUser = await db.collection('users').findOne({ email });
+    if (existingUser) {
+      return NextResponse.json({ error: 'User already exists' }, { status: 400 });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    await db.collection('users').insertOne({ email, password: hashedPassword, name });
+
+    return NextResponse.json({ message: 'User created successfully' }, { status: 201 });
+  } catch (error) {
+    console.error('Signup error:', error);
+    return NextResponse.json({ error: 'Failed to sign up: ' + error.message }, { status: 500 });
   }
-
-  const hashedPassword = await bcrypt.hash(password, 10);
-  await db.collection('users').insertOne({ email, password: hashedPassword });
-
-  return NextResponse.json({ message: 'User created' }, { status: 201 });
 }
