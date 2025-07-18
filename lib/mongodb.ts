@@ -4,6 +4,7 @@ declare global {
 }
 
 import { MongoClient } from 'mongodb';
+import fs from 'fs'; // For reading CA certificate if needed
 
 const uri = process.env.MONGODB_URI;
 let client;
@@ -14,7 +15,7 @@ if (!uri) throw new Error('Please add your MongoDB URI to .env.local');
 if (process.env.NODE_ENV === 'development') {
   if (!global._mongoClientPromise) {
     client = new MongoClient(uri, {
-      ssl: true, // Enable SSL/TLS
+      ssl: true,
       tlsInsecure: process.env.NODE_ENV === 'development', // Allow self-signed certs in dev
       serverSelectionTimeoutMS: 5000,
     });
@@ -23,8 +24,9 @@ if (process.env.NODE_ENV === 'development') {
   clientPromise = global._mongoClientPromise;
 } else {
   client = new MongoClient(uri, {
-    ssl: true, // Enable SSL/TLS in production
+    ssl: true,
     serverSelectionTimeoutMS: 5000,
+   
   });
   clientPromise = client.connect();
 }
