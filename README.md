@@ -72,19 +72,19 @@ This section details the API endpoints implemented in the **Recipe Viewer** appl
 
 ## screenshots of project
 
-# Login page
+**`Login page`**
 
 ![Login page](./public/Login.png)
 
-# Home page
+**`Home page`**
 
 ![Home page](./public/Home.png)
 
-# favorite page
+**`Favorite page`**
 
 ![Favorite page](./public/favorite.png)
 
-# recipe page
+**`Recipe page`**
 
 ![recipe page](./public/recipe.png)
 
@@ -94,6 +94,7 @@ This section outlines the directory and file structure of the **Recipe Viewer** 
 
 
     ```bash
+    
     recipe-viewer/
     ├── .env.local              # Local environment variables (e.g., NEXTAUTH_SECRET, MONGODB_URI)
     ├── .gitignore              # Git ignore file
