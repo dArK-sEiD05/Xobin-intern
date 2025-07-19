@@ -2,9 +2,13 @@
 
 Welcome to the **Recipe Viewer** application, a Next.js-based web platform designed to manage and display recipes with user authentication. This project leverages modern web technologies and integrates with MongoDB for data storage, offering a seamless user experience.
 
+## Project link
+
+[Deployed website in vercel](https://mealdbproj.vercel.app)
+
 ## Project Overview
 
-This application was developed as part of an internship project at Xobin, deployed on Vercel at `https://xobin-intern.vercel.app/`. It provides a secure environment for users to log in, view recipes, and manage their accounts, with a focus on robust authentication and database connectivity.
+The **Recipe Viewer** is a dynamic web application built with Next.js, designed to provide users with an engaging platform to explore and manage recipes. This project combines a secure authentication system with a robust database backend, offering a seamless experience for discovering new recipes and searching through a curated collection. Deployed on Vercel, the application leverages modern web technologies to ensure fast performance and scalability. With features like random recipe generation and a search function, it serves as a foundation for recipe enthusiasts to interact with culinary content, with potential for future enhancements in recipe management.
 
 ## Features
 
@@ -31,7 +35,8 @@ This application was developed as part of an internship project at Xobin, deploy
    git clone https://github.com/your-username/recipe-viewer.git
    cd recipe-viewer
 
-2. ```bash
+2.  Install dependencies
+    ```bash
     npm install
 
 3. Set env
@@ -50,57 +55,57 @@ This section details the API endpoints implemented in the **Recipe Viewer** appl
   - **Methods**: `GET`, `POST`
   - **Purpose**: Handles authentication callbacks, session management, user login, logout, and session updates. This is the core endpoint for NextAuth, processing credential-based authentication and JWT session strategies.
   - **Implementation**: Utilizes `NextAuth` with a custom `authOptions` object in `app/api/auth/[...nextauth]/route.ts`. The `CredentialsProvider` authorizes users by connecting to MongoDB via `connectToDatabase` in `lib/mongodb.ts`, validating credentials with `bcrypt`, and managing sessions with JWT callbacks. Logging is added for debugging (e.g., `console.log` in `authorize` and `callbacks`).
-  - **Example**: `POST https://xobin-intern.vercel.app/api/auth/callback/credentials` for credential-based login.
+  - **Example**: `POST https://localhost:3000/api/auth/callback/credentials` for credential-based login.
 
 - **`/login`**
   - **Method**: `GET`
   - **Purpose**: Renders the login page, providing a user interface for entering email and password credentials.
   - **Implementation**: Defined as a page route in Next.js (e.g., `app/login/page.tsx`). It includes a form that submits credentials to the `/api/auth/[...nextauth]` endpoint via NextAuth's `signIn` function, with the login page configured in `authOptions.pages.signIn = '/login'`.
-  - **Example**: `GET https://xobin-intern.vercel.app/login` to access the login UI.
+  - **Example**: `GET https://localhost:3000/login` to access the login UI.
 
 - **`/api/auth/callback/credentials`**
   - **Method**: `POST`
   - **Purpose**: Serves as the callback endpoint for authentication responses, processing the result of the credential-based login attempt and redirecting the user accordingly.
-  - **Implementation**: Handled automatically by NextAuth as part of the `/api/auth/[...nextauth]` route. The callback URL is dynamically set in `authOptions` using `process.env.NEXTAUTH_URL` or `process.env.VERCEL_URL` for production and preview environments, respectively. Errors (e.g., 401 Unauthorized) are logged and may stem from MongoDB connection issues (e.g., `MongoServerSelectionError`).
-  - **Example**: `POST https://xobin-intern.vercel.app/api/auth/callback/credentials` after submitting login credentials.
+  - **Implementation**: Handled automatically by NextAuth as part of the `/api/auth/[...nextauth]` route. The callback URL is dynamically set in `authOptions` using `process.env.NEXTAUTH_URL` or `process.env.VERCEL_URL` for production and preview environments, respectively. 
+  - **Example**: `POST https://localhost:3000/api/auth/callback/credentials` after submitting login credentials.
 
 ## Project Structure
 
-This section outlines the directory and file structure of the **Recipe Viewer** application, designed with Next.js . The structure supports authentication, MongoDB integration, and a scalable architecture. Below is the project layout in Bash format, generated as of 12:46 PM IST on Saturday, July 19, 2025.
+This section outlines the directory and file structure of the **Recipe Viewer** application, designed with Next.js . The structure supports authentication, MongoDB integration, and a scalable architecture. 
 
 
 ```bash
-recipe-viewer/
-├── .env.local              # Local environment variables (e.g., NEXTAUTH_SECRET, MONGODB_URI)
-├── .gitignore              # Git ignore file
-├── README.md               # Project documentation
-├── package.json            # Node.js dependencies and scripts
-├── tsconfig.json           # TypeScript configuration
-├── next.config.js          # Next.js configuration (if customized)
-├── public/                 # Static files where icons and screenshots are stored
-│      
-├── app/                    # Next.js app directory
-│   ├── api/                # API routes
-│   │   ├── auth/                # Authentication routes
-│   │   │   └── [...nextauth]    # Catch-all route for NextAuth
-│   │   │        ├── route.ts  
-                 └── auth.ts            # Authentication logic and options
-│   ├── layout.tsx          # Root layout for the app
-│   ├── page.tsx            # Home page
-│   ├── login/              # Login page
-│   │   └── page.tsx        # Login UI and form
-│   └── ...                 # Other pages (e.g., recipe list favorite)
-├── lib/                    # Utility functions
-│   └── mongodb.ts          # MongoDB connection logic
-├── styles/                 # CSS or global styles
-│   └── globals.css         # Global CSS file
-└── node_modules/           # Dependency directory (generated by npm)
+    recipe-viewer/
+    ├── .env.local              # Local environment variables (e.g., NEXTAUTH_SECRET, MONGODB_URI)
+    ├── .gitignore              # Git ignore file
+    ├── README.md               # Project documentation
+    ├── package.json            # Node.js dependencies and scripts
+    ├── tsconfig.json           # TypeScript configuration
+    ├── next.config.js          # Next.js configuration (if customized)
+    ├── public/                 # Static files where icons and screenshots are stored
+    │      
+    ├── app/                    # Next.js app directory
+    │   ├── api/                # API routes
+    │   │   ├── auth/                # Authentication routes
+    │   │   │   └── [...nextauth]    # Catch-all route for NextAuth
+    │   │   │        ├── route.ts  
+                    └── auth.ts            # Authentication logic and options
+    │   ├── layout.tsx          # Root layout for the app
+    │   ├── page.tsx            # Home page
+    │   ├── login/              # Login page
+    │   │   └── page.tsx        # Login UI and form
+    │   └── ...                 # Other pages (e.g., recipe list favorite)
+    ├── lib/                    # Utility functions
+    │   └── mongodb.ts          # MongoDB connection logic
+    ├── styles/                 # CSS or global styles
+    │   └── globals.css         # Global CSS file
+    └── node_modules/           # Dependency directory (generated by npm)
 
 
 
 ## Features
 
-This section highlights the key features of the **Recipe Viewer** application, developed as a Next.js-based web platform with MongoDB integration and deployed at `https://xobin-intern.vercel.app/`.
+
 
 - **User Authentication**: Secure login and session management using NextAuth with a Credentials provider, ensuring user data is protected and sessions are maintained across interactions.
 - **Recipe Management**: Displays recipes with potential for future CRUD (Create, Read, Update, Delete) functionality, providing a foundation for recipe viewing and management.
@@ -112,9 +117,7 @@ This section highlights the key features of the **Recipe Viewer** application, d
 - **Dynamic Deployment**: Supports dynamic URLs via Vercel, seamlessly adapting to production and preview environments for testing and deployment.
 
 
-## Project link
 
-[Deployed website in vercel](https://meal-app-nine-nu.vercel.app/signup)
 
 ### screenshots of project
 
