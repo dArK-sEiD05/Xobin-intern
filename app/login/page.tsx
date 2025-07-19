@@ -24,7 +24,7 @@ export default function Login() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#f2f2f2] via-[#e6e9f0] to-[#fefefe]">
       <div className="bg-white bg-opacity-90 p-10 rounded-2xl shadow-2xl w-full max-w-sm h-[500px] flex flex-col justify-center">
         <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center">Login</h1>
-        {error && <p className="text-red-500 text-center mb-4">{error}</p>}
+        {error && <p className="text-red-500 text-center mb-4">{<p>Enter proper credentials</p>}</p>}
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
             <label className="block text-gray-700 mb-1">Email</label>

@@ -1,11 +1,9 @@
-// app/api/auth/[...nextauth]/route.ts
 import NextAuth, { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { connectToDatabase } from '@/lib/mongodb';
 import bcrypt from 'bcryptjs';
-import { ObjectId } from 'mongodb';
 
-// Extend NextAuth types
+// Extend the built-in Session and User types
 declare module 'next-auth' {
   interface Session {
     user: {
@@ -15,6 +13,7 @@ declare module 'next-auth' {
       image?: string | null;
     };
   }
+
   interface User {
     id: string;
   }
@@ -27,82 +26,79 @@ declare module 'next-auth/jwt' {
   }
 }
 
-// Define auth options
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
       name: 'Credentials',
       credentials: {
-        email: { label: 'Email', type: 'text' },
+        email: { label: 'Email', type: 'email' },
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
         console.log('Authorize called with credentials:', credentials);
-
-        if (!credentials?.email || !credentials?.password) {
-          console.error('Missing email or password');
-          return null;
-        }
-
         try {
+          if (!credentials?.email || !credentials?.password) {
+            console.log('Missing credentials');
+            return null;
+          }
           const { db } = await connectToDatabase();
+          if (!db) {
+            console.log('Database connection failed');
+            return null;
+          }
           const user = await db.collection('users').findOne({ email: credentials.email });
-
           if (!user) {
-            console.error('User not found');
+            console.log('No user found for email:', credentials.email);
             return null;
           }
-
-          const isPasswordValid = await bcrypt.compare(credentials.password, user.password);
-
-          if (!isPasswordValid) {
-            console.error('Invalid password');
+          const isValid = await bcrypt.compare(credentials.password, user.password);
+          if (!isValid) {
+            console.log('Invalid password for user:', credentials.email);
             return null;
           }
-
-          return {
-            id: user._id.toString(),
-            name: user.name || '',
-            email: user.email,
-          };
-        } catch (err) {
-          console.error('Authorize error:', err);
+          console.log('Authentication successful for user:', user.email);
+          return { id: user._id.toString(), email: user.email, name: user.name };
+        } catch (error) {
+          console.error('Authorize error:', error);
           return null;
         }
       },
     }),
   ],
-
   session: {
     strategy: 'jwt',
     maxAge: 30 * 24 * 60 * 60, // 30 days
-    updateAge: 24 * 60 * 60,   // 24 hours
+    updateAge: 24 * 60 * 60, // 24 hours
   },
-
-  secret: process.env.NEXTAUTH_SECRET,
-
+  secret: process.env.NEXTAUTH_SECRET || 'default-secret-for-dev-only', // Fallback for dev
   pages: {
     signIn: '/login',
     signOut: '/',
     error: '/login',
   },
-
   callbacks: {
     async jwt({ token, user }) {
+      console.log('JWT callback, user:', user, 'token:', token);
       if (user) {
         token.id = user.id;
-        token.name = user.name ?? '';
+        token.name = user.name;
       }
       return token;
     },
     async session({ session, token }) {
+      console.log('Session callback, session:', session, 'token:', token);
       if (session.user) {
         session.user.id = token.id as string;
-        session.user.name = token.name ?? '';
+        session.user.name = token.name as string;
+        console.log('Session user ID:', session.user.id);
       }
       return session;
     },
   },
+  // Explicit NEXTAUTH_URL for production
+  ...(process.env.NODE_ENV === 'production' && {
+    callbackUrl: `${process.env.NEXTAUTH_URL || 'https://xobin-intern.vercel.app'}/api/auth/callback/credentials`,
+  }),
 };
 
 const handler = NextAuth(authOptions);
