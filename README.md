@@ -75,6 +75,7 @@ This section outlines the directory and file structure of the **Recipe Viewer** 
 
 
     ```bash
+    
     recipe-viewer/
     ├── .env.local              # Local environment variables (e.g., NEXTAUTH_SECRET, MONGODB_URI)
     ├── .gitignore              # Git ignore file
