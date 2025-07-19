@@ -74,7 +74,7 @@ This section details the API endpoints implemented in the **Recipe Viewer** appl
 This section outlines the directory and file structure of the **Recipe Viewer** application, designed with Next.js . The structure supports authentication, MongoDB integration, and a scalable architecture. 
 
 
-```bash
+    ```bash
     recipe-viewer/
     ├── .env.local              # Local environment variables (e.g., NEXTAUTH_SECRET, MONGODB_URI)
     ├── .gitignore              # Git ignore file
