@@ -69,13 +69,31 @@ This section details the API endpoints implemented in the **Recipe Viewer** appl
   - **Implementation**: Handled automatically by NextAuth as part of the `/api/auth/[...nextauth]` route. The callback URL is dynamically set in `authOptions` using `process.env.NEXTAUTH_URL` or `process.env.VERCEL_URL` for production and preview environments, respectively. 
   - **Example**: `POST https://localhost:3000/api/auth/callback/credentials` after submitting login credentials.
 
+
+## screenshots of project
+
+# Login page
+
+![Login page](./public/Login.png)
+
+# Home page
+
+![Home page](./public/Home.png)
+
+# favorite page
+
+![Favorite page](./public/favorite.png)
+
+# recipe page
+
+![recipe page](./public/recipe.png)
+
 ## Project Structure
 
 This section outlines the directory and file structure of the **Recipe Viewer** application, designed with Next.js . The structure supports authentication, MongoDB integration, and a scalable architecture. 
 
 
     ```bash
-
     recipe-viewer/
     ├── .env.local              # Local environment variables (e.g., NEXTAUTH_SECRET, MONGODB_URI)
     ├── .gitignore              # Git ignore file
@@ -90,7 +108,7 @@ This section outlines the directory and file structure of the **Recipe Viewer** 
     │   │   ├── auth/                # Authentication routes
     │   │   │   └── [...nextauth]    # Catch-all route for NextAuth
     │   │   │        ├── route.ts  
-                    └── auth.ts            # Authentication logic and options
+                └── auth.ts            # Authentication logic and options
     │   ├── layout.tsx          # Root layout for the app
     │   ├── page.tsx            # Home page
     │   ├── login/              # Login page
@@ -119,17 +137,3 @@ This section outlines the directory and file structure of the **Recipe Viewer** 
 
 
 
-
-### screenshots of project
-
-#Login
-![Login page](./public/Login.png)
-
-#Home
-![Home page](./public/Home.png)
-
-#favorite
-![Favorite page](./public/favorite.png)
-
-#recipe
-![recipe page](./public/recipe.png)
