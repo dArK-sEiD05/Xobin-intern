@@ -14,7 +14,15 @@ export default function Signup() {
       await axios.post('/api/signup', { email, password });
       window.location.href = '/login';
     } catch (err) {
-      setError('Signup failed. Please try again.');
+
+      if (axios.isAxiosError(err)) {
+        setError(err.response?.data?.error || 'Failed to sign up');
+      } else {
+        setError('Failed to sign up');
+      }
+      
+     
+     
     }
   };
 
@@ -23,7 +31,9 @@ export default function Signup() {
       <div className="bg-white p-10 rounded-2xl shadow-2xl w-full max-w-sm min-h-[500px] flex flex-col justify-center">
         <h1 className="text-3xl font-semibold text-gray-800 mb-6 text-center">Create Account</h1>
         
-        {error && <p className="text-red-500 text-center mb-4">{error}</p>}
+        {
+        error && <p className="text-red-500 text-center mb-4">{error}</p>}
+        
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>

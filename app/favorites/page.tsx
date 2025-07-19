@@ -60,7 +60,7 @@ export default function Favorites() {
 
   if (!session) {
     return (
-      <div className="text-center py-8 bg-gray-100">
+      <div className="text-center py-8 ">
         Please{' '}
         <a href="/login" className="text-blue-500 underline">
           log in

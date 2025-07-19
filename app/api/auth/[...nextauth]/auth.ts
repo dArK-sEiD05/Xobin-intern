@@ -35,34 +35,34 @@ export const authOptions: NextAuthOptions = {
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
-        console.log('Authorize called with credentials:', credentials);
-        try {
-          if (!credentials?.email || !credentials?.password) {
-            console.log('Missing credentials');
-            return null;
-          }
-          const { db } = await connectToDatabase();
-          if (!db) {
-            console.log('Database connection failed');
-            return null;
-          }
-          const user = await db.collection('users').findOne({ email: credentials.email });
-          if (!user) {
-            console.log('No user found for email:', credentials.email);
-            return null;
-          }
-          const isValid = await bcrypt.compare(credentials.password, user.password);
-          if (!isValid) {
-            console.log('Invalid password for user:', credentials.email);
-            return null;
-          }
-          console.log('Authentication successful for user:', user.email);
-          return { id: user._id.toString(), email: user.email, name: user.name };
-        } catch (error) {
-          console.error('Authorize error:', error);
-          return null;
-        }
-      },
+  console.log('Authorize called with credentials:', credentials);
+  try {
+    if (!credentials?.email || !credentials?.password) {
+      throw new Error('Please provide both email and password');
+    }
+
+    const { db } = await connectToDatabase();
+    if (!db) {
+      throw new Error('Database connection failed');
+    }
+
+    const user = await db.collection('users').findOne({ email: credentials.email });
+    if (!user) {
+      throw new Error('No user found with this email');
+    }
+
+    const isValid = await bcrypt.compare(credentials.password, user.password);
+    if (!isValid) {
+      throw new Error('Incorrect password');
+    }
+
+    return { id: user._id.toString(), email: user.email, name: user.name };
+  } catch (error: any) {
+    console.error('Authorize error:', error);
+    throw new Error(error.message || 'Login failed');
+  }
+}
+,
     }),
   ],
   session: {
