@@ -32,8 +32,8 @@ The **Recipe Viewer** is a dynamic web application built with Next.js, designed 
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/recipe-viewer.git
-   cd recipe-viewer
+   git clone https://github.com/dArK-sEiD05/Xobin-intern.git
+   
 
 2.  Install dependencies
     ```bash
@@ -54,7 +54,7 @@ This section details the API endpoints implemented in the **Recipe Viewer** appl
 - **`/api/auth/[...nextauth]`**
   - **Methods**: `GET`, `POST`
   - **Purpose**: Handles authentication callbacks, session management, user login, logout, and session updates. This is the core endpoint for NextAuth, processing credential-based authentication and JWT session strategies.
-  - **Implementation**: Utilizes `NextAuth` with a custom `authOptions` object in `app/api/auth/[...nextauth]/route.ts`. The `CredentialsProvider` authorizes users by connecting to MongoDB via `connectToDatabase` in `lib/mongodb.ts`, validating credentials with `bcrypt`, and managing sessions with JWT callbacks. Logging is added for debugging (e.g., `console.log` in `authorize` and `callbacks`).
+  - **Implementation**: Utilizes `NextAuth` with a custom `authOptions` object in `app/api/auth/[...nextauth]/route.ts`. The `CredentialsProvider` authorizes users by connecting to MongoDB via `connectToDatabase` in `lib/mongodb.ts`, validating credentials with `bcrypt`, and managing sessions with JWT callbacks. 
   - **Example**: `POST https://localhost:3000/api/auth/callback/credentials` for credential-based login.
 
 - **`/login`**
@@ -94,7 +94,7 @@ This section outlines the directory and file structure of the **Recipe Viewer** 
 
 
     ```bash
-    
+
     recipe-viewer/
     ├── .env.local              # Local environment variables (e.g., NEXTAUTH_SECRET, MONGODB_URI)
     ├── .gitignore              # Git ignore file
