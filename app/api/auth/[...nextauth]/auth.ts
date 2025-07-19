@@ -1,9 +1,10 @@
+// app/api/auth/[...nextauth]/route.ts
 import NextAuth, { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { connectToDatabase } from '@/lib/mongodb';
 import bcrypt from 'bcryptjs';
 
-// Extend the built-in Session and User types
+// Extend NextAuth types
 declare module 'next-auth' {
   interface Session {
     user: {
@@ -38,26 +39,21 @@ export const authOptions: NextAuthOptions = {
         console.log('Authorize called with credentials:', credentials);
         try {
           if (!credentials?.email || !credentials?.password) {
-            console.log('Missing credentials');
             return null;
           }
+
           const { db } = await connectToDatabase();
-          if (!db) {
-            console.log('Database connection failed');
-            return null;
-          }
           const user = await db.collection('users').findOne({ email: credentials.email });
-          if (!user) {
-            console.log('No user found for email:', credentials.email);
+
+          if (!user || !await bcrypt.compare(credentials.password, user.password)) {
             return null;
           }
-          const isValid = await bcrypt.compare(credentials.password, user.password);
-          if (!isValid) {
-            console.log('Invalid password for user:', credentials.email);
-            return null;
-          }
-          console.log('Authentication successful for user:', user.email);
-          return { id: user._id.toString(), email: user.email, name: user.name };
+
+          return {
+            id: user._id.toString(),
+            email: user.email,
+            name: user.name,
+          };
         } catch (error) {
           console.error('Authorize error:', error);
           return null;
@@ -68,9 +64,9 @@ export const authOptions: NextAuthOptions = {
   session: {
     strategy: 'jwt',
     maxAge: 30 * 24 * 60 * 60, // 30 days
-    updateAge: 24 * 60 * 60, // 24 hours
+    updateAge: 24 * 60 * 60,   // 24 hours
   },
-  secret: process.env.NEXTAUTH_SECRET || 'default-secret-for-dev-only', // Fallback for dev
+  secret: process.env.NEXTAUTH_SECRET,
   pages: {
     signIn: '/login',
     signOut: '/',
@@ -78,7 +74,6 @@ export const authOptions: NextAuthOptions = {
   },
   callbacks: {
     async jwt({ token, user }) {
-      console.log('JWT callback, user:', user, 'token:', token);
       if (user) {
         token.id = user.id;
         token.name = user.name;
@@ -86,19 +81,13 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
     async session({ session, token }) {
-      console.log('Session callback, session:', session, 'token:', token);
       if (session.user) {
         session.user.id = token.id as string;
         session.user.name = token.name as string;
-        console.log('Session user ID:', session.user.id);
       }
       return session;
     },
   },
-  // Explicit NEXTAUTH_URL for production
-  ...(process.env.NODE_ENV === 'production' && {
-    callbackUrl: `${process.env.NEXTAUTH_URL || 'https://xobin-intern.vercel.app'}/api/auth/callback/credentials`,
-  }),
 };
 
 const handler = NextAuth(authOptions);
